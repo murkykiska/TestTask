@@ -5,7 +5,7 @@ namespace TestTask
 {
     public class ReadOnlyStream : IReadOnlyStream
     {
-        private Stream _localStream;
+        private StreamReader _localStream;
 
         /// <summary>
         /// Конструктор класса. 
@@ -15,21 +15,16 @@ namespace TestTask
         /// <param name="fileFullPath">Полный путь до файла для чтения</param>
         public ReadOnlyStream(string fileFullPath)
         {
-            IsEof = true;
-
-            // TODO : Заменить на создание реального стрима для чтения файла!
-            _localStream = null;
+            _localStream = new StreamReader(fileFullPath);
         }
-                
+
         /// <summary>
         /// Флаг окончания файла.
         /// </summary>
         public bool IsEof
         {
-            get; // TODO : Заполнять данный флаг при достижении конца файла/стрима при чтении
-            private set;
+            get { return _localStream.EndOfStream; }
         }
-
         /// <summary>
         /// Ф-ция чтения следующего символа из потока.
         /// Если произведена попытка прочитать символ после достижения конца файла, метод 
@@ -38,8 +33,11 @@ namespace TestTask
         /// <returns>Считанный символ.</returns>
         public char ReadNextChar()
         {
-            // TODO : Необходимо считать очередной символ из _localStream
-            throw new NotImplementedException();
+            if (IsEof)
+            {
+                throw new Exception("Достигнут конец файла.");
+            }
+            return (char)_localStream.Read();
         }
 
         /// <summary>
@@ -49,12 +47,22 @@ namespace TestTask
         {
             if (_localStream == null)
             {
-                IsEof = true;
                 return;
             }
 
-            _localStream.Position = 0;
-            IsEof = false;
+            // Синхронизация внутреннего буфера и основного потока
+            _localStream.DiscardBufferedData();
+            // Смещение позиции в основном потоке
+            _localStream.BaseStream.Seek(0, SeekOrigin.Begin);
+        }
+        /// <summary>
+        /// Функция закрытия файла и освобождения всех ресурсов,
+        /// используемых объектом.
+        /// </summary>
+        public void CloseFile()
+        {
+            _localStream.Close();
+            _localStream.Dispose();
         }
     }
 }
