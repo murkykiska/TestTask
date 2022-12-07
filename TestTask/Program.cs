@@ -101,14 +101,24 @@ namespace TestTask
             List<LetterStats> DoubleLetterStats = new List<LetterStats>();
             char c1 = ' ';
             char c2 = ' ';
+            bool isFirst = true;
             stream.ResetPositionToStart();
 
             while (!stream.IsEof)
             {
-                c1 = (c1 == ' ') ? stream.ReadNextChar() : c2;
-                if (!char.IsLetter(c1)) continue;
+                if (isFirst)
+                {
+                    c1 = stream.ReadNextChar();
+                    isFirst = false;
+                }
+                else
+                {
+                    c1 = c2;
+                }
 
                 c2 = stream.ReadNextChar();
+
+                if (!char.IsLetter(c1)) continue;
                 if (!char.IsLetter(c2)) continue;
 
                 if ((c1.ToString()).ToLower() != (c2.ToString()).ToLower()) continue;
@@ -140,7 +150,6 @@ namespace TestTask
         /// </summary>
         /// <param name="letters">Коллекция со статистиками вхождения букв/пар</param>
         /// <param name="charType">Тип букв для анализа</param>
-        /// <param name="registerIndependent">Зависит ли статистика от регистра</param>
         private static void RemoveCharStatsByType(IList<LetterStats> letters, CharType charType)
         {
             switch (charType)
@@ -161,8 +170,7 @@ namespace TestTask
                         if (!firstOrDefault.Equals(default)) letters.Remove(firstOrDefault);
                     }
                     break;
-            }
-            
+            }            
         }
 
         /// <summary>
