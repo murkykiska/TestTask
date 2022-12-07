@@ -15,7 +15,13 @@ namespace TestTask
         /// </summary>
         /// <param name="args">Первый параметр - путь до первого файла.
         /// Второй параметр - путь до второго файла.</param>
-        
+        private static readonly char[] VowelLetters = { 'A', 'E', 'I', 'O', 'U', 'Y', 'А', 'Я', 'У', 'Ю', 'О', 'Е', 'Ё', 'Э', 'И', 'Ы',
+                                                        'a', 'e', 'i', 'o', 'u', 'y', 'а', 'я', 'у', 'ю', 'о', 'е', 'ё', 'э', 'и', 'ы' };
+
+        private static readonly char[] ConsonantLetters = { 'B', 'C', 'D', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'V', 'W', 'X', 'Z',
+                                                            'Б', 'В', 'Г', 'Д', 'Ж', 'З', 'Й', 'К', 'Л', 'М', 'Н', 'П', 'Р', 'С', 'Т', 'Ф', 'Х', 'Ц', 'Ч', 'Ш', 'Щ',
+                                                            'b', 'c', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'm', 'n', 'p', 'q', 'r', 's', 't', 'v', 'w', 'x', 'z',
+                                                            'б', 'в', 'г', 'д', 'ж', 'з', 'й', 'к', 'л', 'м', 'н', 'п', 'р', 'с', 'т', 'ф', 'х', 'ц', 'ч', 'ш', 'щ' };
         static void Main(string[] args)
         {
             IReadOnlyStream inputStream1 = GetInputStream(args[0]);
@@ -97,7 +103,6 @@ namespace TestTask
             char c2 = ' ';
             stream.ResetPositionToStart();
 
-
             while (!stream.IsEof)
             {
                 c1 = (c1 == ' ') ? stream.ReadNextChar() : c2;
@@ -135,14 +140,26 @@ namespace TestTask
         /// </summary>
         /// <param name="letters">Коллекция со статистиками вхождения букв/пар</param>
         /// <param name="charType">Тип букв для анализа</param>
+        /// <param name="registerIndependent">Зависит ли статистика от регистра</param>
         private static void RemoveCharStatsByType(IList<LetterStats> letters, CharType charType)
         {
-            // TODO : Удалить статистику по запрошенному типу букв.
             switch (charType)
             {
                 case CharType.Consonants:
+                    foreach (var letter in ConsonantLetters)
+                    {
+                        var firstOrDefault = letters.FirstOrDefault(x => x.Letter.Contains(letter.ToString()));
+
+                        if (!firstOrDefault.Equals(default)) letters.Remove(firstOrDefault);
+                    }
                     break;
                 case CharType.Vowel:
+                    foreach (var letter in VowelLetters)
+                    {
+                        var firstOrDefault = letters.FirstOrDefault(x => x.Letter.Contains(letter.ToString()));
+
+                        if (!firstOrDefault.Equals(default)) letters.Remove(firstOrDefault);
+                    }
                     break;
             }
             
