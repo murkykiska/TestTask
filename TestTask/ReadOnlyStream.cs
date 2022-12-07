@@ -25,6 +25,7 @@ namespace TestTask
         {
             get { return _localStream.EndOfStream; }
         }
+
         /// <summary>
         /// Ф-ция чтения следующего символа из потока.
         /// Если произведена попытка прочитать символ после достижения конца файла, метод 
@@ -55,6 +56,7 @@ namespace TestTask
             // Смещение позиции в основном потоке
             _localStream.BaseStream.Seek(0, SeekOrigin.Begin);
         }
+
         /// <summary>
         /// Функция закрытия файла и освобождения всех ресурсов,
         /// используемых объектом.
